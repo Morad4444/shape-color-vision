@@ -1,0 +1,17 @@
+paths:
+  image_dir: "data/samples"
+  output_dir: "data/output"
+  log_csv: "logs/detections.csv"
+video:
+  camera_index: 0
+  show_window: true
+  save_output: false
+detect:
+  min_area: 800
+colors_hsv:           # HSV ranges; tweak later
+  red1:   [0,   90, 80,  10, 255, 255]
+  red2:   [170, 90, 80, 180, 255, 255]
+  green:  [35,  50, 50,  85, 255, 255]
+  blue:   [90,  50, 50, 130, 255, 255]
+  yellow: [20,  80, 80,  35, 255, 255]
+  violet: [130, 50, 50, 160, 255, 255]
