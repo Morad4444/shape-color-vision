@@ -16,7 +16,10 @@ class Video:
 
 @dataclass
 class Detect:
-    min_area: int = 800
+    min_area: int = 1200
+    min_solidity: float = 0.85
+    pastel_s_thresh: int = 120
+    min_circularity: float = 0.78  # currently used in shapes.py constants
 
 @dataclass
 class HSVRanges:
@@ -35,23 +38,15 @@ class AppConfig:
     colors_hsv: HSVRanges
 
 def load_config(path: str) -> AppConfig:
-    """Load YAML config and map it to dataclasses."""
     p = Path(path)
     if not p.exists():
         raise FileNotFoundError(f"Config not found: {p}")
-
     with p.open("r") as f:
         cfg = yaml.safe_load(f) or {}
 
-    # Expect the same keys as in configs/default.yaml
-    paths = Paths(**cfg["paths"])
-    video = Video(**cfg["video"])
-    detect = Detect(**cfg["detect"])
-    colors = HSVRanges(**cfg["colors_hsv"])
-
     return AppConfig(
-        paths=paths,
-        video=video,
-        detect=detect,
-        colors_hsv=colors,
+        paths=Paths(**cfg["paths"]),
+        video=Video(**cfg["video"]),
+        detect=Detect(**cfg["detect"]),
+        colors_hsv=HSVRanges(**cfg["colors_hsv"]),
     )

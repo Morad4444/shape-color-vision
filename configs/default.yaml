@@ -2,16 +2,22 @@ paths:
   image_dir: "data/samples"
   output_dir: "data/output"
   log_csv: "logs/detections.csv"
+
 video:
   camera_index: 0
   show_window: true
   save_output: false
+
 detect:
   min_area: 800
-colors_hsv:           # HSV ranges; tweak later
-  red1:   [0,   90, 80,  10, 255, 255]
-  red2:   [170, 90, 80, 180, 255, 255]
-  green:  [35,  50, 50,  85, 255, 255]
-  blue:   [90,  50, 50, 130, 255, 255]
-  yellow: [20,  80, 80,  35, 255, 255]
-  violet: [130, 50, 50, 160, 255, 255]
+  min_solidity: 0.65
+  pastel_s_thresh: 90        # was 100
+  min_circularity: 0.75
+
+colors_hsv:
+  red1:   [0,   120, 80,   10, 255, 255]
+  red2:   [170, 120, 80, 180, 255, 255]
+  green:  [35,   30,  40,   95, 255, 255]    # widened hue range
+  blue:   [90,   40,  40,  135, 255, 255]
+  yellow: [18,   70,  70,   35, 255, 255]
+  violet: [125,  40,  40,  180, 255, 255]    # widened upper hue
