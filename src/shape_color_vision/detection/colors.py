@@ -60,7 +60,7 @@ def classify_color(
         return ("unknown", 0.0)
     
     # Orange sits between our red and yellow bands (~10..20 on OpenCV scale).
-    if 8 <= h < 22:
+    if 10 <= h < 22:
         return ("unknown", 0.0)
     
     #--- NEW: Hot pink / magenta veto ---
