@@ -83,3 +83,15 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# --- NEW: console-script entrypoints ---
+def image_main():
+    """Console script wrapper for the `image` command."""
+    import typer
+    typer.run(image)
+
+def camera_main():
+    """Console script wrapper for the `camera` command."""
+    import typer
+    typer.run(camera)

@@ -1,2 +1,36 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
-name="shape-color-vision"
+name = "shape-color-vision"
+version = "0.1.0"
+description = "Detects basic shapes and colors in images/videos with OpenCV"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "Morad", email = "you@example.com" }]
+# Add or adjust these to match your venv; these are typical deps you already use.
+dependencies = [
+  "opencv-python>=4.8",
+  "numpy>=1.24",
+  "typer>=0.9",
+  "pyyaml>=6.0",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["shape_color_vision*"]
+
+# Optional: include non-Python files if you ship configs, etc.
+[tool.setuptools.package-data]
+"shape_color_vision" = []
+
+[project.scripts]
+# Single entry with subcommands: `scv image ...`, `scv camera ...`
+scv = "shape_color_vision.main:app"
+# One-shot helpers so you can just run `image` or `camera`
+image = "shape_color_vision.main:image_main"
+camera = "shape_color_vision.main:camera_main"

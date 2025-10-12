@@ -6,7 +6,7 @@ paths:
 video:
   camera_index: 0
   show_window: true
-  save_output: false
+  save_output: true
 
 # Fallback defaults used if per-mode sections are omitted
 detect:
