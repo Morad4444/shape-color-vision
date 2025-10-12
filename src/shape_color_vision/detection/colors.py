@@ -1,4 +1,3 @@
-# src/shape_color_vision/detection/colors.py
 import cv2
 import numpy as np
 from typing import Tuple, Optional, Dict
@@ -21,7 +20,6 @@ def _masked_bgr_means(bgr_roi: np.ndarray, roi_mask: Optional[np.ndarray]) -> Tu
         mask = np.ones(bgr_roi.shape[:2], np.uint8) * 255
     else:
         mask = (roi_mask > 0).astype(np.uint8) * 255
-    # compute means with mask
     b = float(cv2.mean(bgr_roi[:, :, 0], mask=mask)[0])
     g = float(cv2.mean(bgr_roi[:, :, 1], mask=mask)[0])
     r = float(cv2.mean(bgr_roi[:, :, 2], mask=mask)[0])
@@ -35,10 +33,10 @@ def classify_color(
 ) -> Tuple[str, float]:
     """
     Robust color classification:
-      - uses masked pixels only
-      - median HSV to resist shading
-      - banded hue with pink guard
-      - blue/violet boundary at 135 with an ambiguous-zone tie-breaker using BGR means
+      - masked pixels only, median HSV
+      - 'distance to red' for wrap-around
+      - orange -> Unknown, hot-pink/magenta -> Unknown
+      - blue/violet boundary nudged with a tie-breaker near the edge
     """
     if bgr_roi is None or bgr_roi.size == 0:
         return ("unknown", 0.0)
@@ -55,60 +53,50 @@ def classify_color(
     if s < 60:
         return ("unknown", 0.0)
 
-    # Pink guard (light magenta): hue near 150–175 but not saturated enough
-    if 150 <= h < 175 and s < 120:
-        return ("unknown", 0.0)
-    
-    # Orange sits between our red and yellow bands (~10..20 on OpenCV scale).
-    if 10 <= h < 22:
-        return ("unknown", 0.0)
-    
-    #--- NEW: Hot pink / magenta veto ---
-    # Strong pinks live around 155–175 (high S,V). We don't want to call them violet.
+    # --- vetoes -------------------------------------------------------------
+    # Hot pink / magenta: don't call it violet
     if 155 <= h < 175:
         return ("unknown", 0.0)
 
-    # --- Hue bands ---
-     # Distance to the red axis (handles wrap-around near 0/179)
+    # Light-pink guard (less saturated magenta near violet)
+    if 150 <= h < 175 and s < 120:
+        return ("unknown", 0.0)
+
+    # Distance to the red axis (handles wrap-around near 0/179)
     red_dist = min(h, 180.0 - h)  # e.g., h=178 → 2; h=7 → 7
 
-    # If we're near red but not truly red, that's "orange" for our purposes → Unknown
-    # (treat 5..22 degrees from red as orange; tweak 22 to 20 if you want tighter)
+    # Orange region around red (but not true red) -> Unknown
     if 5.0 <= red_dist < 22.0:
         return ("unknown", 0.0)
 
-    # --- Hue bands (keep as-is, but change RED to use red_dist) ---
+    # --- hue bands ----------------------------------------------------------
     color = "unknown"
     band_lo, band_hi = h, h
 
     # RED exactly (very close to the red axis)
     if red_dist < 5.0:
         color = "red" if s >= 110 else "unknown"
-        # pick band edges consistent with whichever side we are on
-        if h < 90:   # around 0°
+        if h < 90:
             band_lo, band_hi = -5.0, 5.0
-        else:        # around 180°
+        else:
             band_lo, band_hi = 175.0, 185.0
 
     elif 22 <= h < 40:
         color, band_lo, band_hi = "yellow", 22, 40
     elif 40 <= h < 95:
         color, band_lo, band_hi = "green", 40, 95
-    elif 95 <= h < 135:
-        color, band_lo, band_hi = "blue", 95, 135
-    elif 135 <= h < 155:
-        color, band_lo, band_hi = "violet", 135, 155
+    elif 95 <= h < 132:
+        color, band_lo, band_hi = "blue", 95, 132
+    elif 132 <= h < 155:
+        color, band_lo, band_hi = "violet", 132, 155
 
-    # --- Ambiguous zone tie-breaker (purple vs blue) ---
-    # If hue is near the boundary, check if red is present alongside blue.
-    if 128 <= h < 142:
+    # Ambiguous zone tie-breaker (purple vs blue)
+    if 125 <= h < 140:
         b, g, r = _masked_bgr_means(bgr_roi, roi_mask)
-        if (r / (b + 1e-6)) >= 0.70:
-            color = "violet"
-            band_lo, band_hi = 135, 175
+        if (r / (b + 1e-6)) >= 0.55:
+            color = "violet"; band_lo, band_hi = 132, 155
         else:
-            color = "blue"
-            band_lo, band_hi = 95, 135
+            color = "blue";   band_lo, band_hi = 95, 132
 
     if color == "unknown":
         return ("unknown", 0.0)

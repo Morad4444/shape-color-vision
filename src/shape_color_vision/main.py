@@ -3,7 +3,9 @@ from pathlib import Path
 import typer
 from typing import Optional
 from .utils.config import load_config, AppConfig
-from .pipeline import analyze_image, analyze_dir
+from .pipeline import analyze_image, analyze_dir, analyze_frame
+from .io.logger_csv import CSVLogger
+
 
 app = typer.Typer(help="Shape & Color Vision")
 
@@ -43,13 +45,38 @@ def image(
 
 @app.command()
 def camera(
-    config: str = typer.Option("configs/default.yaml", "--config", "-c"),
-    index: Optional[int] = typer.Option(None),
-    show_window: bool = typer.Option(True),
-    log_file: Optional[str] = typer.Option(None),
+    config: str = typer.Option("configs/default.yaml"),
+    index: int = typer.Option(0, help="Webcam index"),
+    save_output: bool = typer.Option(False, help="Save annotated video frames"),
 ):
-    # (We’ll implement live mode after image mode is verified)
-    typer.echo("Camera mode will be implemented after image mode verification.")
+    cfg = load_config(config)
+    if save_output:
+        cfg.video.save_output = True
+        Path(cfg.paths.output_dir).mkdir(parents=True, exist_ok=True)
+
+    cap = cv2.VideoCapture(index)
+    if not cap.isOpened():
+        typer.secho("Could not open camera", fg=typer.colors.RED)
+        raise typer.Exit(code=1)
+
+    logger = CSVLogger(cfg.paths.log_csv)
+    try:
+        while True:
+            ok, frame = cap.read()
+            if not ok:
+                break
+            out = analyze_frame(frame, cfg, logger)
+            cv2.imshow("Shape & Color Vision (press q to quit)", out)
+
+            if save_output:
+                # optional: write individual PNGs, or wire a VideoWriter if you prefer
+                pass
+
+            if (cv2.waitKey(1) & 0xFF) == ord('q'):
+                break
+    finally:
+        cap.release()
+        cv2.destroyAllWindows()
 
 def main():
     app()

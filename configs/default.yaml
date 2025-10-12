@@ -1,23 +1,56 @@
 paths:
-  image_dir: "data/samples"
-  output_dir: "data/output"
-  log_csv: "logs/detections.csv"
+  image_dir: data/samples
+  output_dir: data/output
+  log_csv: logs/detections.csv
 
 video:
   camera_index: 0
   show_window: true
   save_output: false
 
+# Fallback defaults used if per-mode sections are omitted
 detect:
   min_area: 800
   min_solidity: 0.65
-  pastel_s_thresh: 90        # was 100
-  min_circularity: 0.75
+  pastel_s_thresh: 90
+  min_circularity: 0.72
+  min_bbox_area_ratio: 0.0015
+  min_extent: 0.50
+  min_width: 16
+  min_height: 16
 
+# HSV color ranges (keep exactly as your working setup)
 colors_hsv:
   red1:   [0,   120, 80,   10, 255, 255]
-  red2:   [170, 120, 80, 180, 255, 255]
-  green:  [35,   30,  40,   95, 255, 255]    # widened hue range
-  blue:   [90,   40,  40,  135, 255, 255]
-  yellow: [18,   70,  70,   35, 255, 255]
-  violet: [125,  40,  40,  180, 255, 255]    # widened upper hue
+  red2:   [170, 120, 80,  180, 255, 255]
+  green:  [35,   30, 40,   95, 255, 255]
+  blue:   [90,   40, 40,  124, 255, 255]
+  yellow: [18,   70, 70,   35, 255, 255]
+  violet: [125,  40, 40,  180, 255, 255]
+
+# ---- NEW: per-mode tuning ----
+
+# Strict for static images — matches the baseline that passes your 3 samples
+image_detect:
+  min_area: 800
+  min_solidity: 0.65
+  min_circularity: 0.72
+  # disable these for images to preserve your exact baseline
+  min_bbox_area_ratio: 0.0
+  min_extent: 0.0
+  min_width: 1
+  min_height: 1
+
+# Relaxed for camera — better under real lighting
+camera_detect:
+  min_area: 600          # if you miss small shapes on webcam, lower to 480
+  min_solidity: 0.60     # if noisy edges pass, raise to 0.65
+  min_bbox_area_ratio: 0.0012
+  min_extent: 0.50
+  min_width: 16
+  min_height: 16
+
+# HSV mask thresholds (S and V minimums)
+# higher values = stricter (fewer detections, less noise)
+image_mask:   { s_min: 40, v_min: 40 }
+camera_mask:  { s_min: 35, v_min: 45 }   # brighten/soften for live feed
