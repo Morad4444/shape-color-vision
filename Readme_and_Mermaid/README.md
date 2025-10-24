@@ -183,6 +183,9 @@ graph TB
 
 
 3.) Component Diagramm
+
+``` mermaid
+
 graph LR
     Cfg["AppConfig"]
     Src["Frame Source (Webcam / Image)"]
@@ -203,7 +206,7 @@ graph LR
     SC --> Ann
     Ann --> Log
     Log --> CSV
-
+```
 
 4.) Code Diagramm:
 
