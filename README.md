@@ -127,3 +127,27 @@ Die Verwendung ist frei, solange der ursprüngliche Autor genannt wird.
 **Autor:** Morad Younis & Emrah Tekin  
 **Version:** 0.1.0  
 **FHGR – Photonics Engineering / Prototyping Modul**
+
+
+
+## C4 Model ##
+
+1.) Context Diagramm 
+//=====================
+graph LR
+    User([User])
+    subgraph External
+        Camera[[Webcam]]
+        ImgFolder[[Image Folder]]
+        FileSystem[(File System / CSV Logs)]
+        Libs[(OpenCV, NumPy, Typer, PyYAML)]
+    end
+
+    App[Shape & Color Vision Application]
+
+    User -->|CLI commands| App
+    Camera -->|Live video stream| App
+    ImgFolder -->|Image files| App
+    App -->|detections.csv| FileSystem
+    App -.->|uses| Libs
+//=============================
