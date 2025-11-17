@@ -16,10 +16,12 @@ pytz==2025.2
 PyYAML==6.0.3
 rich==14.1.0
 setuptools==80.9.0
--e git+ssh://git@github.com/Morad4444/shape-color-vision.git@914b9f26b0303102cd2f31f244baeef5bc2af239#egg=shape_color_vision
+#-e git+ssh://git@github.com/Morad4444/shape-color-vision.git@914b9f26b0303102cd2f31f244baeef5bc2af239#egg=shape_color_vision
 shellingham==1.5.4
 six==1.17.0
 typer==0.19.2
 typing_extensions==4.15.0
 tzdata==2025.2
 wheel==0.45.1
+-e .
+
