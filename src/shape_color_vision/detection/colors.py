@@ -1,3 +1,18 @@
+"""
+colors.py — HSV-based color classification.
+
+Responsibilities:
+• Convert frames to HSV.
+• Apply threshold masks for configured color ranges.
+• Classify colors inside detected shape regions.
+• Keep color logic separate from shape geometry (SRP).
+
+Does NOT:
+• Detect shapes or draw anything.
+"""
+
+
+
 import cv2
 import numpy as np
 from typing import Tuple, Optional, Dict

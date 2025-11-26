@@ -1,3 +1,20 @@
+"""
+main.py — CLI entry point for the Shape-Color Vision system.
+
+Responsibilities:
+• Load configuration and initialize the processing pipeline.
+• Provide the top-level loop for handling images, videos, or camera feed.
+• Orchestrate detectors, preprocessing, visualization, and logging
+  without containing any low-level algorithmic logic.
+
+Notes:
+• Keeps the application high-level (KISS).
+• Core functionality is delegated to pipeline.Pipeline.
+"""
+
+
+
+
 import cv2
 from pathlib import Path
 import typer

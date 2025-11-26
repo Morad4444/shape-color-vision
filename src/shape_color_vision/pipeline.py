@@ -1,3 +1,20 @@
+"""
+pipeline.py — Central pipeline coordinating the full vision system.
+
+Responsibilities:
+• Connect all system components: preprocessing → detection → classification → output.
+• Manage dependencies between modules (shapes, colors, viz, logging).
+• Ensure each frame passes through a consistent ordered workflow.
+• Serve as the main integration layer while keeping each task isolated
+  (Integration/Operation Segregation Principle).
+
+This module does NOT:
+• Perform shape or color detection itself.
+• Handle visualization details (delegated to io.viz).
+• Load raw configuration files (delegated to utils.config).
+"""
+
+
 from __future__ import annotations
 
 import os

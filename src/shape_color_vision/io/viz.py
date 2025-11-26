@@ -1,3 +1,19 @@
+"""
+viz.py — Visualization utilities for the Shape-Color Vision system.
+
+Responsibilities:
+• Draw detected shapes, colors, labels, and bounding boxes.
+• Display intermediate stages (mask, contours, annotated frame).
+• Provide optional UI elements that can be swapped out without changing
+  detector logic (Open/Closed Principle).
+
+Notes:
+• No detection or classification should happen here.
+• Keep it purely presentation-related.
+"""
+
+
+
 import cv2
 import numpy as np
 from typing import Tuple
