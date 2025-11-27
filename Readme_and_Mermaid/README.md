@@ -126,7 +126,7 @@ Die Verwendung ist frei, solange der ursprüngliche Autor genannt wird.
 
 **Autor:** Morad Younis & Emrah Tekin  
 **Version:** 0.1.0  
-**FHGR – Photonics Engineering / Prototyping Modul**
+**FHGR – Photonics Engineering / Software Entwickler Modul**
 
 
 
