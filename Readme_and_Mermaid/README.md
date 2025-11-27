@@ -1,132 +1,161 @@
 # Shape & Color Vision
+A lightweight and modular shape & color recognition pipeline using OpenCV and Python.
 
-Dieses Projekt verwendet Methoden der **Computer Vision**, um einfache geometrische Formen  
-(z. B. Kreis, Quadrat, Dreieck, Rechteck) und **Farben** (Rot, Grün, Blau, Gelb, Violett usw.) automatisch zu erkennen.  
-Es kann sowohl auf **Einzelbildern** als auch auf **Live-Kamera-Streams** (z. B. einer Webcam) ausgeführt werden.
+This project uses **Computer Vision** methods to detect basic geometric shapes  
+(e.g., circle, square, triangle, rectangle) and **colors** (red, green, blue, yellow, violet, etc.) automatically.  
+It can be executed on both **single images** and **live camera streams** (e.g., a webcam).
 
-## Inhaltsverzeichnis
-1. [Projektübersicht](#-projektübersicht)
-2. [Projektstruktur](#-projektstruktur)
-3. [Installation und Ausführung](#️-installation-und-ausführung)
-4. [Funktionsweise](#-funktionsweise)
-5. [Modulübersicht](#-modulübersicht)
-6. [Beispielausgabe](#-beispielausgabe)
-7. [Entwicklerhinweise](#-entwicklerhinweise)
+## Table of Contents
+1. [Project Overview](#project-overview)
+2. [Project Structure](#project-structure)
+3. [Installation & Execution](#installation--execution)
+4. [How It Works](#how-it-works)
+5. [Module Overview](#module-overview)
+6. [Example Output](#example-output)
+7. [Developer Notes](#developer-notes)
+8. [Learning Objectives](#learning-objectives)
+9. [License](#license)
 
-## Projektübersicht
+## Project Overview
 
-Das System analysiert ein Bild oder Videoframes, erkennt Objekte anhand ihrer **Form und Farbe**,  
-beschriftet diese visuell im Bild und protokolliert die Ergebnisse in einer **CSV-Datei**.
+The system analyzes an image or video frame, detects objects based on their **shape and color**,  
+visually labels them in the output image, and logs the detection results to a **CSV file**.
 
-### Ablauf der Verarbeitung
-1. **Maskenerstellung** im HSV-Farbraum basierend auf Sättigungs- und Helligkeitsschwellen.
-2. **Konturerkennung** und Filterung nach geometrischen Kriterien.
-3. Für jeden gefundenen Kontur:
-   - Farbanalyse mittels medianer HSV-Werte (`colors.py`)
-   - Formklassifizierung mittels Konturmetrik (`shapes.py`)
-4. Ausgabe der Ergebnisse im Bild (mit Textlabel).
-5. Protokollierung der Erkennung in einer CSV-Datei (`logs/detections.csv`).
+### Processing Pipeline
+1. **Mask generation** in HSV color space based on saturation and brightness thresholds.
+2. **Contour detection** and geometric filtering.
+3. For each detected contour:
+   - Color analysis using median HSV values (`colors.py`)
+   - Shape classification based on contour metrics (`shapes.py`)
+4. Rendering labeled results into the output image.
+5. Logging every detection into a CSV file (`logs/detections.csv`).
 
-## Projektstruktur
+## Project Structure
 
 ```
 shape_color_vision/
 │
-├── main.py               # CLI (Kommandozeilenanwendung)
-├── pipeline.py           # Verarbeitungs-Pipeline
+├── main.py               # CLI (Command Line Interface)
+├── pipeline.py           # Processing Pipeline
 │
-├── colors.py             # Farbklassifikation (HSV-basiert)
-├── shapes.py             # Formklassifikation (Konturbasiert)
-├── logger_csv.py         # CSV-Logger für Erkennungsergebnisse
-├── viz.py                # Visualisierung (Label, Konturen)
-├── config.py             # YAML-Konfiguration laden
-├── __init__.py           # Paketinformationen (__version__, __app_name__)
+├── colors.py             # Color classification (HSV-based)
+├── shapes.py             # Shape classification (contour-based)
+├── logger_csv.py         # CSV logger for detection results
+├── viz.py                # Visualization (labeling, contour drawing)
+├── config.py             # Load YAML configuration
+├── __init__.py           # Package info (__version__, __app_name__)
 │
 ├── data/
-│   ├── samples/          # Beispielbilder
-│   └── output/           # Annotierte Ausgabebilder
+│   ├── samples/          # Sample images
+│   └── output/           # Annotated output images
 │
 └── logs/
-    └── detections.csv    # CSV-Protokoll
+    └── detections.csv    # CSV log
 ```
 
-## Installation und Ausführung
+## Installation & Execution
 
-### Abhängigkeiten installieren
+### Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-**Minimale Pakete:**
+**Minimal packages:**
 ```bash
 opencv-python
 numpy
 typer
 pyyaml
 ```
-### Programm starten
 
-#### Analyse eines Bildverzeichnisses:
+## Quick Start
+
+Run shape & color detection on sample images:
 ```bash
 python -m shape_color_vision.main image --config configs/default.yaml --save-output
 ```
 
-#### Analyse mit der Webcam:
+Run detection with a webcam:
 ```bash
 python -m shape_color_vision.main camera --config configs/default.yaml
 ```
 
-> Drücke **q**, um die Live-Ansicht zu beenden.
+Press **q** to quit the live camera view.
 
-## Funktionsweise
+## CLI Help
 
-1. Laden der Parameter aus der Konfigurationsdatei (`default.yaml`),  
-   z. B. Mindestfläche, Sättigungs-/Helligkeitsschwellen, Speicherpfade.
-2. Umwandlung des Bildes in den **HSV-Farbraum**.
-3. Anwendung von Morphologie-Operationen zur Maskierung der relevanten Bereiche.
-4. Analyse jedes Konturs:
-   - `classify_color()` → Farbe
-   - `classify_shape()` → Geometrische Form
-5. Ausgabe der beschrifteten Ergebnisse auf dem Bildschirm und Speicherung im CSV-Log.
+```bash
+python -m shape_color_vision.main --help
+```
 
-## Modulübersicht
+```
+Usage: main [OPTIONS] COMMAND [ARGS]...
 
-| Modul | Beschreibung |
-|-------|---------------|
-| **`colors.py`** | Robuste Farbklassifikation auf Basis der Median-Hue-Werte. Unklare Bereiche (z. B. Orange, Magenta) werden als *unknown* markiert. |
-| **`shapes.py`** | Bestimmung geometrischer Formen über Umfang, Eckenanzahl, Achsenverhältnis und Rundheit. |
-| **`logger_csv.py`** | Schreibt jede Erkennung mit Zeitstempel, Form, Farbe und Konfidenz in eine CSV-Datei. |
-| **`viz.py`** | Zeichnet Labels und Konturen auf das Bild. |
-| **`config.py`** | Liest YAML-Konfigurationsdateien und erstellt ein `AppConfig`-Objekt. |
-| **`pipeline.py`** | Hauptlogik: Erkennung, Klassifikation und Logging. |
-| **`main.py`** | CLI mit Befehlen `image` und `camera` über das `typer`-Framework. |
+Commands:
+  image   Run detection on a directory of images
+  camera  Run detection on a webcam stream
+```
 
-## Beispielausgabe (CSV-Log)
+## How It Works
+
+1. Load parameters from the configuration file (`default.yaml`)
+2. Convert the image into **HSV color space**
+3. Use morphology operations to mask regions of interest
+4. Process each contour:
+   - `classify_color()` → color
+   - `classify_shape()` → geometric shape
+5. Display results and log them into the CSV file
+
+## Module Overview
+
+| Module | Description |
+|-------|--------------|
+| **`colors.py`** | Robust color classification using median hue values. Ambiguous segments (e.g., orange, magenta) are labeled as *unknown*. |
+| **`shapes.py`** | Identifies geometric shapes using contour perimeter, vertex count, aspect ratio, and circularity. |
+| **`logger_csv.py`** | Writes each detection with timestamp, shape, color, and confidence into the CSV log. |
+| **`viz.py`** | Draws labels and contours onto the image. |
+| **`config.py`** | Loads YAML configuration files and creates an `AppConfig` object. |
+| **`pipeline.py`** | Core logic: detection, classification, and logging. |
+| **`main.py`** | CLI commands `image` and `camera` via the `typer` framework. |
+
+## Example Output (CSV Log)
 
 | timestamp | shape | color | confidence | source | name |
-|------------|--------|--------|-------------|---------|--------|
+|-----------|--------|--------|-------------|---------|--------|
 | 2025-10-24T14:30:01 | Circle | red | 0.95 | IMAGE | ball.png |
 | 2025-10-24T14:31:11 | Square | blue | 0.88 | CAMERA | webcam |
 
-## Entwicklerhinweise
+## Developer Notes
 
-- **Farbraum:** Alle Berechnungen erfolgen im HSV-Raum (`cv2.cvtColor(BGR → HSV)`).
-- **Formmetrik:** Kombination aus *Circularity*, *Solidity* und *Aspect Ratio* zur präzisen Trennung von Kreis, Rechteck und Polygon.
-- **"Unknown"-Klasse:** Wird bei geringer Sättigung oder mehrdeutigen Tönen vergeben.
-- **Codequalität:** Der gesamte Code ist nach **PEP8**, mit **Type Hints** und klarer Modulstruktur geschrieben.
-- **Optimierung:** Für Raspberry Pi oder eingebettete Systeme leicht anpassbar.
-- **Logging:** CSV-Dateien werden automatisch erstellt, wenn sie nicht existieren.
+- **Color space:** All computations are performed in HSV (`cv2.cvtColor(BGR → HSV)`).
+- **Shape metrics:** Combination of *Circularity*, *Solidity*, and *Aspect Ratio* for reliable classification.
+- **"Unknown" class:** Used for low saturation or ambiguous color tones.
+- **Code quality:** Written according to **PEP8**, with type hints and clean modular structure.
+- **Optimization:** Can be easily adapted for Raspberry Pi or embedded systems.
+- **Logging:** CSV files are automatically created if they do not exist.
 
-## Lizenz
+## Learning Objectives
 
-Dieses Projekt wurde zu Lern- und Forschungszwecken entwickelt.  
-Die Verwendung ist frei, solange der ursprüngliche Autor genannt wird.
+- Understanding the HSV color space  
+- Extracting and analyzing contours  
+- Applying geometric shape metrics  
+- Building a simple image processing pipeline  
+- Logging and visualizing detections  
 
 ---
 
-**Autor:** Morad Younis & Emrah Tekin  
+**Academic Note:**  
+This project was created as part of a course assignment.  
+The goal is to demonstrate fundamental computer vision techniques  
+for shape and color recognition — not to provide a production-grade system.
+
+## License
+
+This project was developed for educational and research purposes.  
+Use is permitted as long as the original authors are credited.
+
+---
+
+**Authors:** Morad Younis & Emrah Tekin  
 **Version:** 0.1.0  
-**FHGR – Photonics Engineering / Software Entwickler Modul**
-
-
-
+**FHGR – Photonics Engineering / Software Development Module**
