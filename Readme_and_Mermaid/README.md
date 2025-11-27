@@ -122,7 +122,7 @@ Commands:
 
 | timestamp | shape | color | confidence | source | name |
 |-----------|--------|--------|-------------|---------|--------|
-| 2025-10-24T14:30:01 | Circle | red | 0.95 | IMAGE | ball.png |
+| 2025-10-24T14:30:01 | Circle | red | 0.95 | IMAGE | samples.png |
 | 2025-10-24T14:31:11 | Square | blue | 0.88 | CAMERA | webcam |
 
 ## Developer Notes
@@ -158,4 +158,4 @@ Use is permitted as long as the original authors are credited.
 
 **Authors:** Morad Younis & Emrah Tekin  
 **Version:** 0.1.0  
-**FHGR – Photonics Engineering / Software Development Module**
+**FHGR – Photonics Engineering / Software Engineering Module**
