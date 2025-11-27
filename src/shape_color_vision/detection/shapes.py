@@ -1,3 +1,18 @@
+"""
+shapes.py — Contour-based geometric shape detection.
+
+Responsibilities:
+• Detect and classify shapes from preprocessed images.
+• Compute contour approximations, polygon analysis, and geometric heuristics.
+• Offer a clean interface for shape detection so the pipeline and visualization
+  don’t need to know implementation details.
+
+Does NOT:
+• Perform color classification.
+• Do image preprocessing or visualization.
+"""
+
+
 import cv2
 import numpy as np
 from typing import Tuple

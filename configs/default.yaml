@@ -1,3 +1,18 @@
+# default.yaml — Main configuration for the Shape-Color Vision system.
+#
+# Purpose:
+# • Provide tunable parameters for color thresholds, shape detection settings,
+#   contour filtering, visualization options, input/output paths, etc.
+# • Allow modifying system behavior without touching Python code.
+# • Support multiple environment profiles (e.g., dev, lab, robot_camera).
+#
+# Notes:
+# • This file is consumed by config.py.
+# • Avoid adding algorithm logic here — keep parameters only.
+
+
+
+
 paths:
   image_dir: data/samples
   output_dir: data/output

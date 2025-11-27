@@ -1,3 +1,19 @@
+"""
+config.py — YAML configuration loader and structured access helper.
+
+Responsibilities:
+• Load and parse configuration files (e.g., default.yaml).
+• Provide typed access (dict-like or attribute-like) to config values.
+• Validate required fields and apply defaults.
+• Isolate system parameters so detection code stays flexible (OCP).
+
+Notes:
+• Contains no detection or visualization logic.
+• Changing system behavior should happen in YAML, not in code.
+"""
+
+
+
 from pathlib import Path
 
 # src/shape_color_vision/utils/config.py
